@@ -10,7 +10,7 @@ const createPlayer = (name, markType) => {
 };
 
 const playGame = (() => {
-    const gameArr = Array(9).fill("");
+    const board = Array(9).fill("");
     const player1 = createPlayer("A", "X");
     const player2 = createPlayer("B", "O");
 
@@ -22,9 +22,17 @@ const playGame = (() => {
 
     const checkWinner = (markType) => {
         for (const arr of ThreeInARow) {
-            if (arr.every(index => gameArr[index] === markType)) {
+            if (arr.every(index => board[index] === markType)) {
                 return true;
             }
+        }
+        return false;
+    };
+
+    const playTurn = (player, index) => {
+        if (board[index] === "") {
+            board[index] = player.getMarkType();
+            return true;
         }
         return false;
     };
