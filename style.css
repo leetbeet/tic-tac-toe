@@ -14,7 +14,6 @@ body {
 
 h1 {
     padding: 16px;
-    margin-bottom: 16px;
     text-align: center;
 }
 
@@ -84,4 +83,11 @@ button:hover {
 
 button:active {
     filter: brightness(85%);
+}
+
+.reset {
+    display: flex;
+    justify-self: center;
+    padding: 2px 16px;
+    margin-bottom: 24px;
 }

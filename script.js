@@ -51,6 +51,7 @@ const displayController = (() => {
     const boxes = Array.from(document.querySelector(".grid").children);
     const form = document.querySelector("form");
     const dialog = document.querySelector("dialog");
+    const resetBtn = document.querySelector(".reset");
     let player1, player2;
 
     if (dialog) {
@@ -79,13 +80,20 @@ const displayController = (() => {
                             alert(`${currentPlayer.getName()} has won`)
                             playGame.resetBoard();
                             boxes.forEach(box => {
-                            box.textContent = "";
-                        });
+                                box.textContent = "";
+                            });
                         }, 10)
                     } else {
                         currentPlayer = currentPlayer === player1 ? player2 : player1;
                     }
                 }
+            });
+        });
+
+        resetBtn.addEventListener("click", () => {
+            playGame.resetBoard();
+            boxes.forEach(box => {
+                box.textContent = "";
             });
         });
     });
