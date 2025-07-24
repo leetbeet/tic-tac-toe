@@ -48,3 +48,40 @@ h1 {
 .grid > div:nth-child(5) {
     border: var(--border);
 }
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+dialog::backdrop {
+  background: rgba(0, 0, 0, 0.5); 
+}
+
+dialog {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0;
+    padding: 32px;
+    border: 1px solid black;
+    border-radius: 8px;
+}
+
+button {
+    border: 1px solid black;
+    border-radius: 4px;
+    padding: 8px;
+    background-color: white;
+}
+
+button:hover {
+    filter: brightness(95%);
+}
+
+button:active {
+    filter: brightness(85%);
+}

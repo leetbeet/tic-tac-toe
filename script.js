@@ -10,9 +10,7 @@ const createPlayer = (name, markType) => {
 };
 
 const playGame = (() => {
-    const board = Array(9).fill("");
-    const player1 = createPlayer("A", "X");
-    const player2 = createPlayer("B", "O");
+    const boardArr = Array(9).fill("");
 
     const ThreeInARow = [
         [0, 1, 2], [3, 4, 5], [6, 7, 8], 
@@ -20,9 +18,9 @@ const playGame = (() => {
         [0, 4, 8], [2, 4, 6]             
     ];
 
-    const checkWinner = (markType) => {
+    const checkWinner = (player) => {
         for (const arr of ThreeInARow) {
-            if (arr.every(index => board[index] === markType)) {
+            if (arr.every(index => boardArr[index] === player.getMarkType())) {
                 return true;
             }
         }
@@ -30,16 +28,46 @@ const playGame = (() => {
     };
 
     const playTurn = (player, index) => {
-        if (board[index] === "") {
-            board[index] = player.getMarkType();
+        if (boardArr[index] === "") {
+            boardArr[index] = player.getMarkType();
             return true;
         }
         return false;
     };
 
     const resetBoard = () => {
-        board.length = 0;
+        boardArr.length = 0;
     }
 
+    return {
+        checkWinner,
+        playTurn,
+        resetBoard
+    };
 
 })();
+
+const displayController = (() => {
+    const board = document.querySelector(".grid");
+    const boxes = board.children;
+    const form = document.querySelector("form");
+    const dialog = document.querySelector("dialog");
+    let name1, name2;
+
+    if (dialog) {
+      dialog.showModal();
+    }
+
+    form.addEventListener("submit", (e) => {
+        e.preventDefault(); 
+
+        name1 = document.getElementById("player1").value;
+        name2 = document.getElementById("player2").value;
+
+        dialog.close(); 
+    });
+
+    const player1 = createPlayer(name1, "X");
+    const player2 = createPlayer(name2, "O");
+})();
+
