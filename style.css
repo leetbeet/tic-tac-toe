@@ -3,3 +3,48 @@
     padding: 0;
     box-sizing: border-box;
 }
+
+:root {
+    --border: 6px solid black;
+}
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+h1 {
+    padding: 16px;
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    margin: 0 30vw;
+}
+
+.grid-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    font-size: 10vw;
+}
+
+.grid > div:nth-child(2),
+.grid > div:nth-child(8) {
+    border-left: var(--border);
+    border-right: var(--border  );
+}
+
+.grid > div:nth-child(4),
+.grid > div:nth-child(6) {
+    border-top: var(--border);
+    border-bottom: var(--border);
+}
+
+.grid > div:nth-child(5) {
+    border: var(--border);
+}
