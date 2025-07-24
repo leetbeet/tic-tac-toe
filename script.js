@@ -37,5 +37,9 @@ const playGame = (() => {
         return false;
     };
 
+    const resetBoard = () => {
+        board.length = 0;
+    }
+
 
 })();
