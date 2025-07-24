@@ -36,7 +36,7 @@ const playGame = (() => {
     };
 
     const resetBoard = () => {
-        boardArr.length = 0;
+        boardArr.fill("");
     }
 
     return {
@@ -48,11 +48,10 @@ const playGame = (() => {
 })();
 
 const displayController = (() => {
-    const board = document.querySelector(".grid");
-    const boxes = board.children;
+    const boxes = Array.from(document.querySelector(".grid").children);
     const form = document.querySelector("form");
     const dialog = document.querySelector("dialog");
-    let name1, name2;
+    let player1, player2;
 
     if (dialog) {
       dialog.showModal();
@@ -61,13 +60,34 @@ const displayController = (() => {
     form.addEventListener("submit", (e) => {
         e.preventDefault(); 
 
-        name1 = document.getElementById("player1").value;
-        name2 = document.getElementById("player2").value;
+        const name1 = document.getElementById("player1").value;
+        const name2 = document.getElementById("player2").value;
+
+        player1 = createPlayer(name1, "X");
+        player2 = createPlayer(name2, "O");
 
         dialog.close(); 
-    });
 
-    const player1 = createPlayer(name1, "X");
-    const player2 = createPlayer(name2, "O");
+        let currentPlayer = player1;
+
+        boxes.forEach((box, index) => {
+            box.addEventListener("click", () => {
+                if (playGame.playTurn(currentPlayer, index)) {
+                    box.textContent = currentPlayer.getMarkType();        
+                    if (playGame.checkWinner(currentPlayer)) {
+                        setTimeout(() => {
+                            alert(`${currentPlayer.getName()} has won`)
+                            playGame.resetBoard();
+                            boxes.forEach(box => {
+                            box.textContent = "";
+                        });
+                        }, 10)
+                    } else {
+                        currentPlayer = currentPlayer === player1 ? player2 : player1;
+                    }
+                }
+            });
+        });
+    });
 })();
 
