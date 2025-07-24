@@ -1,101 +1,86 @@
-const createPlayer = (name, markType) => {
-    return {
-        getName() {
-            return name;
-        },
-        getMarkType() {
-            return markType;
-        }
-    };
-};
+const createPlayer = (name, markType) => ({
+	getName: () => name,
+	getMarkType: () => markType,
+});
 
 const playGame = (() => {
-    const boardArr = Array(9).fill("");
+	const board = Array(9).fill(""); // 3x3 game board
 
-    const ThreeInARow = [
-        [0, 1, 2], [3, 4, 5], [6, 7, 8], 
-        [0, 3, 6], [1, 4, 7], [2, 5, 8], 
-        [0, 4, 8], [2, 4, 6]             
-    ];
+	const winCombos = [
+		[0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
+		[0, 3, 6], [1, 4, 7], [2, 5, 8], // columns
+		[0, 4, 8], [2, 4, 6]             // diagonals
+	];
 
-    const checkWinner = (player) => {
-        for (const arr of ThreeInARow) {
-            if (arr.every(index => boardArr[index] === player.getMarkType())) {
-                return true;
-            }
-        }
-        return false;
-    };
+	const checkWinner = (player) =>
+		winCombos.some(combo =>
+			combo.every(i => board[i] === player.getMarkType())
+		);
 
-    const playTurn = (player, index) => {
-        if (boardArr[index] === "") {
-            boardArr[index] = player.getMarkType();
-            return true;
-        }
-        return false;
-    };
+    const checkDraw = () => board.every(val => val !== "");   
 
-    const resetBoard = () => {
-        boardArr.fill("");
-    }
+	const playTurn = (player, index) => {
+		if (board[index] !== "") return false;
+		board[index] = player.getMarkType();
+		return true;
+	};
 
-    return {
-        checkWinner,
-        playTurn,
-        resetBoard
-    };
+	const resetBoard = () => board.fill("");
 
+	return { checkWinner, checkDraw, playTurn, resetBoard };
 })();
 
 const displayController = (() => {
-    const boxes = Array.from(document.querySelector(".grid").children);
-    const form = document.querySelector("form");
-    const dialog = document.querySelector("dialog");
-    const resetBtn = document.querySelector(".reset");
-    let player1, player2;
+	const boxes = Array.from(document.querySelector(".grid").children);
+	const form = document.querySelector("form");
+	const dialog = document.querySelector("dialog");
+	const resetBtn = document.querySelector(".reset");
 
-    if (dialog) {
-      dialog.showModal();
-    }
+	let player1, player2, currentPlayer;
 
-    form.addEventListener("submit", (e) => {
-        e.preventDefault(); 
+	if (dialog) dialog.showModal(); // Show player name input dialog on load
 
-        const name1 = document.getElementById("player1").value;
-        const name2 = document.getElementById("player2").value;
+	form.addEventListener("submit", (e) => {
+		e.preventDefault();
 
-        player1 = createPlayer(name1, "X");
-        player2 = createPlayer(name2, "O");
+        // Initialise players with inputted names
+		player1 = createPlayer(document.getElementById("player1").value, "X");
+		player2 = createPlayer(document.getElementById("player2").value, "O");
+		currentPlayer = player1;
 
-        dialog.close(); 
+		dialog.close();
+		initBoardEvents();
+	});
 
-        let currentPlayer = player1;
+	const initBoardEvents = () => {
+		boxes.forEach((box, index) => {
+			box.addEventListener("click", () => {
+				if (!playGame.playTurn(currentPlayer, index)) return;
 
-        boxes.forEach((box, index) => {
-            box.addEventListener("click", () => {
-                if (playGame.playTurn(currentPlayer, index)) {
-                    box.textContent = currentPlayer.getMarkType();        
-                    if (playGame.checkWinner(currentPlayer)) {
-                        setTimeout(() => {
-                            alert(`${currentPlayer.getName()} has won`)
-                            playGame.resetBoard();
-                            boxes.forEach(box => {
-                                box.textContent = "";
-                            });
-                        }, 10)
-                    } else {
-                        currentPlayer = currentPlayer === player1 ? player2 : player1;
-                    }
+				box.textContent = currentPlayer.getMarkType();
+
+				if (playGame.checkWinner(currentPlayer)) {
+                    // Delay alert so the mark shows before alert
+					setTimeout(() => {
+						alert(`${currentPlayer.getName()} has won!`);
+						resetBoardUI();
+					}, 10);
+				} else if (playGame.checkDraw()) {
+                    setTimeout(() => {
+						alert("It's a draw!");
+						resetBoardUI();
+					}, 10);
+				} else {
+                    currentPlayer = currentPlayer === player1 ? player2 : player1;
                 }
-            });
-        });
+			});
+		});
+	};
 
-        resetBtn.addEventListener("click", () => {
-            playGame.resetBoard();
-            boxes.forEach(box => {
-                box.textContent = "";
-            });
-        });
-    });
+	const resetBoardUI = () => {
+		playGame.resetBoard();
+		boxes.forEach(box => (box.textContent = ""));
+	};
+
+	resetBtn.addEventListener("click", resetBoardUI);
 })();
-
